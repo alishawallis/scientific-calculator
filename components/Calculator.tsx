@@ -2,11 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 
+interface ButtonProps {
+  children: React.ReactNode;
+  onClick: () => void;
+  className?: string;
+}
+
 const Calculator = () => {
-  const [display, setDisplay] = useState('0');
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [memory, setMemory] = useState(null);
-  const [hasDecimal, setHasDecimal] = useState(false);
+  const [display, setDisplay] = useState<string>('0');
+  const [currentTime, setCurrentTime] = useState<Date>(new Date());
+  const [hasDecimal, setHasDecimal] = useState<boolean>(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -15,25 +20,25 @@ const Calculator = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const handleNumber = (num) => {
-    setDisplay(prev => prev === '0' ? String(num) : prev + num);
+  const handleNumber = (num: string): void => {
+    setDisplay(prev => prev === '0' ? num : prev + num);
   };
 
-  const handleOperator = (op) => {
+  const handleOperator = (op: string): void => {
     setDisplay(prev => prev + op);
     setHasDecimal(false);
   };
 
-  const handleDecimal = () => {
+  const handleDecimal = (): void => {
     if (!hasDecimal) {
       setDisplay(prev => prev + '.');
       setHasDecimal(true);
     }
   };
 
-  const calculate = () => {
+  const calculate = (): void => {
     try {
-      let expression = display
+      const expression = display
         .replace(/sin/g, 'Math.sin')
         .replace(/cos/g, 'Math.cos')
         .replace(/tan/g, 'Math.tan')
@@ -46,17 +51,17 @@ const Calculator = () => {
       const result = eval(expression);
       setDisplay(String(result));
       setHasDecimal(String(result).includes('.'));
-    } catch (error) {
+    } catch {
       setDisplay('Error');
     }
   };
 
-  const clear = () => {
+  const clear = (): void => {
     setDisplay('0');
     setHasDecimal(false);
   };
 
-  const Button = ({ children, onClick, className = '' }) => (
+  const Button: React.FC<ButtonProps> = ({ children, onClick, className = '' }) => (
     <button
       onClick={onClick}
       className={`p-2 text-white rounded hover:opacity-80 active:opacity-60 ${className}`}
@@ -67,7 +72,6 @@ const Calculator = () => {
 
   return (
     <div className="p-4 bg-blue-500 max-w-md shadow-xl rounded-lg">
-      {/* Enhanced Digital Clock Display */}
       <div className="bg-blue-900 p-4 rounded-lg mb-4">
         <div className="text-2xl font-mono text-center text-white">
           {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
@@ -119,4 +123,4 @@ const Calculator = () => {
   );
 };
 
-export default Calculator;
+export default Calculator
